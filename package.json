@@ -1,0 +1,198 @@
+{
+  "name": "ai-limits-meter",
+  "displayName": "AI Limits Meter — Claude Code & Codex",
+  "description": "See your Claude Code and Codex 5-hour and weekly limits, plus cost (R$/US$) and tokens, always visible in VS Code.",
+  "version": "1.0.0",
+  "publisher": "renatodouek",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/redouek/AI-Limits-Meter"
+  },
+  "bugs": {
+    "url": "https://github.com/redouek/AI-Limits-Meter/issues"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization",
+    "AI"
+  ],
+  "keywords": [
+    "claude",
+    "claude code",
+    "codex",
+    "usage",
+    "limits",
+    "tokens",
+    "cost",
+    "rate limit",
+    "anthropic",
+    "openai"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "aiLimitsMeter",
+          "title": "AI Limits",
+          "icon": "media/meter.svg"
+        }
+      ]
+    },
+    "views": {
+      "aiLimitsMeter": [
+        {
+          "type": "webview",
+          "id": "aiLimitsMeter.view",
+          "name": "Limits",
+          "icon": "media/meter.svg"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "aiLimitsMeter.refresh",
+        "title": "AI Limits: Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "aiLimitsMeter.focus",
+        "title": "AI Limits: Show panel"
+      },
+      {
+        "command": "aiLimitsMeter.openSettings",
+        "title": "AI Limits: Settings",
+        "icon": "$(gear)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "aiLimitsMeter.refresh",
+          "when": "view == aiLimitsMeter.view",
+          "group": "navigation@1"
+        },
+        {
+          "command": "aiLimitsMeter.openSettings",
+          "when": "view == aiLimitsMeter.view",
+          "group": "navigation@2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "AI Limits Meter",
+      "properties": {
+        "aiLimitsMeter.providers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "claude",
+              "codex"
+            ]
+          },
+          "default": [
+            "claude",
+            "codex"
+          ],
+          "description": "Which tools to track. / Quais ferramentas acompanhar."
+        },
+        "aiLimitsMeter.currency": {
+          "type": "string",
+          "enum": [
+            "both",
+            "brl",
+            "usd"
+          ],
+          "enumDescriptions": [
+            "R$ and US$",
+            "R$ only",
+            "US$ only"
+          ],
+          "default": "both",
+          "description": "Currency for costs. / Moeda dos custos."
+        },
+        "aiLimitsMeter.usdToBrl": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "description": "Fixed USD→BRL rate. 0 = fetch automatically once a day. / Cotação fixa. 0 = automática diária."
+        },
+        "aiLimitsMeter.barColor": {
+          "type": "string",
+          "default": "#F5C518",
+          "description": "Bar color (turns orange from 80% used and red from 92%). / Cor das barras."
+        },
+        "aiLimitsMeter.statusBar": {
+          "type": "string",
+          "enum": [
+            "limitsAndCost",
+            "limits",
+            "off"
+          ],
+          "default": "limitsAndCost",
+          "description": "What to show in the status bar. / O que mostrar na barra de status."
+        },
+        "aiLimitsMeter.warnAtPercentUsed": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "default": [
+            80,
+            95
+          ],
+          "description": "Show a notification when a limit reaches these % used. Empty = never. / Avisar ao atingir estes % de uso."
+        },
+        "aiLimitsMeter.apiPollSeconds": {
+          "type": "number",
+          "default": 120,
+          "minimum": 60,
+          "description": "How often to ask Anthropic for Claude limits (also refreshed right after each prompt, at most once a minute)."
+        },
+        "aiLimitsMeter.logPollSeconds": {
+          "type": "number",
+          "default": 10,
+          "minimum": 3,
+          "description": "How often to read local logs for tokens and cost."
+        },
+        "aiLimitsMeter.language": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "pt-br",
+            "en"
+          ],
+          "default": "auto",
+          "description": "Interface language. auto = follow VS Code."
+        },
+        "aiLimitsMeter.customPrices": {
+          "type": "object",
+          "default": {},
+          "markdownDescription": "Override or add model prices (USD per 1M tokens), keyed by model-id prefix. Example: `{ \"gpt-5.6\": { \"input\": 5, \"cacheRead\": 0.5, \"output\": 30 } }`"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "esbuild src/extension.ts --bundle --platform=node --target=node18 --external:vscode --outfile=dist/extension.js --minify",
+    "typecheck": "tsc --noEmit",
+    "vscode:prepublish": "npm run typecheck && npm run build",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/vscode": "1.90.0",
+    "@vscode/vsce": "^3",
+    "esbuild": "^0.25",
+    "typescript": "^5"
+  }
+}
