@@ -40,7 +40,12 @@ Veja seus limites de **5 horas** e **semanal** do Claude Code e do Codex o tempo
 2. Clique em `⋯` e depois em **Install from VSIX…**.
 3. Escolha o arquivo.
 
-**Para deixar a faixa acima do chat do Claude Code:** arraste a aba **Limits** (ícone de barras na barra lateral) até o painel onde o Claude Code está aberto e solte acima do chat. O VS Code guarda essa posição.
+**Onde posicionar o painel:** o VS Code não permite que uma extensão se encaixe dentro do chat de outra. Por isso, a faixa não pode ficar acima da caixa de prompt do Claude Code ou do Codex. As opções que funcionam bem são:
+- deixar o painel **Limits** na barra lateral esquerda, onde ele já aparece;
+- arrastar a aba **Limits** para a barra lateral secundária (direita) ou para o painel inferior, ao lado do chat;
+- usar só o resumo da **barra de status**, que fica sempre visível.
+
+O VS Code guarda a posição que você escolher.
 
 ## Configurações
 
