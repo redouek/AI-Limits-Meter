@@ -1,5 +1,8 @@
 # AI Limits Meter — Claude Code & Codex
 
+[![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/renatodouek.ai-limits-meter?label=VS%20Code%20Marketplace&color=F5C518)](https://marketplace.visualstudio.com/items?itemName=renatodouek.ai-limits-meter)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/renatodouek.ai-limits-meter?color=F5C518)](https://marketplace.visualstudio.com/items?itemName=renatodouek.ai-limits-meter)
+
 **PT-BR** · [English below](#english)
 
 Veja seus limites de **5 horas** e **semanal** do Claude Code e do Codex o tempo todo dentro do VS Code, junto com o consumo em **R$ / US$** e **tokens**, sem precisar abrir a tela de uso.
@@ -33,7 +36,7 @@ Veja seus limites de **5 horas** e **semanal** do Claude Code e do Codex o tempo
 
 ## Instalação
 
-**Pelo Marketplace:** procure por **AI Limits Meter** na aba Extensões.
+**Pelo Marketplace:** procure por **AI Limits Meter** na aba Extensões ou [instale por aqui](https://marketplace.visualstudio.com/items?itemName=renatodouek.ai-limits-meter).
 
 **Por arquivo `.vsix`:**
 1. Abra a aba Extensões.
