@@ -42,6 +42,8 @@ Veja seus limites de **5 horas** e **semanal** do Claude Code e do Codex o tempo
 
 **Onde posicionar os painéis:** a extensão tem **dois painéis independentes**, um para o **Claude Code** e outro para o **Codex**. Arraste cada aba para o lugar que funciona melhor para aquela IA: barra lateral esquerda, barra lateral direita ou painel inferior. A barra de status também mostra um item separado para cada uma.
 
+**Uma IA por projeto:** clique no ícone de projeto no topo do painel, ou rode **AI Limits: Choose AI for this project**, e escolha Claude Code, Codex ou ambos. A escolha fica salva só naquele projeto: o painel da outra IA some e o que fica aparece na posição que você definiu para ele.
+
 O VS Code não permite que uma extensão se encaixe dentro do chat de outra, então os painéis não podem ficar acima da caixa de prompt. O VS Code guarda a posição que você escolher.
 
 ## Configurações
@@ -66,6 +68,7 @@ Always-visible **5-hour** and **weekly** limits for Claude Code and Codex in VS 
 - Limit bars start empty and fill up to 100% as you use them, with the reset time. Bars turn orange from 80% and red from 92%.
 - Usage is shown for the last prompt, current session, 5h window, today and week. Hover a row for the input/output/cache breakdown.
 - Separate panels and status bar items for Claude Code and Codex, so you can place each one where it fits best.
+- Per-project choice of which AI to track: run **AI Limits: Choose AI for this project**.
 - A status bar item is always visible, and you get notifications at 80% and 95% of a limit.
 - **Claude limits** come from the same endpoint as Claude's Usage screen, using the login Claude Code already stores. **Codex limits** come from Codex's own session logs. **Tokens and cost** come from local logs.
 - Cost is the **API-equivalent** price. Subscription plans are not billed per token.

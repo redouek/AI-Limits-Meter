@@ -2,7 +2,7 @@
   "name": "ai-limits-meter",
   "displayName": "AI Limits Meter — Claude Code & Codex",
   "description": "See your Claude Code and Codex 5-hour and weekly limits, plus cost (R$/US$) and tokens, always visible in VS Code.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "publisher": "renatodouek",
   "license": "MIT",
   "icon": "media/icon.png",
@@ -83,10 +83,20 @@
       {
         "command": "aiLimitsMeter.focus.codex",
         "title": "AI Limits: Show Codex panel"
+      },
+      {
+        "command": "aiLimitsMeter.chooseForProject",
+        "title": "AI Limits: Choose AI for this project",
+        "icon": "$(project)"
       }
     ],
     "menus": {
       "view/title": [
+        {
+          "command": "aiLimitsMeter.chooseForProject",
+          "when": "view == aiLimitsMeter.claude || view == aiLimitsMeter.codex",
+          "group": "navigation@0"
+        },
         {
           "command": "aiLimitsMeter.refresh",
           "when": "view == aiLimitsMeter.claude || view == aiLimitsMeter.codex",
@@ -115,7 +125,8 @@
             "claude",
             "codex"
           ],
-          "description": "Which tools to track. / Quais ferramentas acompanhar."
+          "description": "Which tools to track. Can be set per project (Workspace settings) or with the command 'AI Limits: Choose AI for this project'. / Quais IAs acompanhar; pode ser definido por projeto.",
+          "scope": "resource"
         },
         "aiLimitsMeter.currency": {
           "type": "string",

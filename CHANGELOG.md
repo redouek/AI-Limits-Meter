@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.0
+- New command "AI Limits: Choose AI for this project" (also a button on the panel) to show Claude Code, Codex or both per project.
+
 ## 1.1.0
 - Separate panels and status bar items for Claude Code and Codex, so each can be placed independently.
 - Limit bars now fill up with usage (0% → 100%).

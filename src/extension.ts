@@ -124,6 +124,26 @@ export function activate(ctx: vscode.ExtensionContext) {
     if (changed) ctx.globalState.update(NOTIFIED_KEY, [...done].slice(-200));
   }
 
+  /** Lets the user pick which tool(s) to show in THIS project (saved as a workspace setting). */
+  async function chooseForProject() {
+    const pt = strings().today === 'Hoje';
+    if (!vscode.workspace.workspaceFolders?.length) {
+      vscode.window.showWarningMessage(pt ? 'Abra uma pasta de projeto primeiro.' : 'Open a project folder first.');
+      return;
+    }
+    const items: (vscode.QuickPickItem & { value?: string[] })[] = [
+      { label: 'Claude Code', value: ['claude'] },
+      { label: 'Codex', value: ['codex'] },
+      { label: pt ? 'Ambos' : 'Both', value: ['claude', 'codex'] },
+      { label: pt ? 'Usar o padrão global' : 'Use the global default', description: pt ? 'remove a escolha deste projeto' : 'clears this project override' },
+    ];
+    const pick = await vscode.window.showQuickPick(items, {
+      placeHolder: pt ? 'Qual IA acompanhar neste projeto?' : 'Which AI should this project track?',
+    });
+    if (!pick) return;
+    await cfg().update('providers', pick.value, vscode.ConfigurationTarget.Workspace);
+  }
+
   function schedule() {
     if (timer) clearInterval(timer);
     const secs = Math.max(3, cfg().get<number>('logPollSeconds', 10));
@@ -132,6 +152,7 @@ export function activate(ctx: vscode.ExtensionContext) {
 
   ctx.subscriptions.push(
     vscode.commands.registerCommand('aiLimitsMeter.refresh', () => tick(true)),
+    vscode.commands.registerCommand('aiLimitsMeter.chooseForProject', chooseForProject),
     vscode.commands.registerCommand('aiLimitsMeter.focus.claude', () => vscode.commands.executeCommand('aiLimitsMeter.claude.focus')),
     vscode.commands.registerCommand('aiLimitsMeter.focus.codex', () => vscode.commands.executeCommand('aiLimitsMeter.codex.focus')),
     vscode.commands.registerCommand('aiLimitsMeter.openSettings', () =>
