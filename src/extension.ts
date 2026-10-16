@@ -16,16 +16,25 @@ export function activate(ctx: vscode.ExtensionContext) {
   const fx = new Fx(ctx.globalState);
   const cfg = () => vscode.workspace.getConfiguration('aiLimitsMeter');
 
-  const status = vscode.window.createStatusBarItem('aiLimitsMeter.status', vscode.StatusBarAlignment.Right, 1000);
-  status.name = 'AI Limits Meter';
-  status.command = 'aiLimitsMeter.focus';
-  ctx.subscriptions.push(status);
+  // One status bar item per tool, so each can be shown/hidden or moved on its own.
+  const mkStatus = (id: 'claude' | 'codex', prio: number) => {
+    const it = vscode.window.createStatusBarItem(`aiLimitsMeter.status.${id}`, vscode.StatusBarAlignment.Right, prio);
+    it.name = id === 'claude' ? 'AI Limits: Claude Code' : 'AI Limits: Codex';
+    it.command = `aiLimitsMeter.focus.${id}`;
+    ctx.subscriptions.push(it);
+    return it;
+  };
+  const statusItems = { claude: mkStatus('claude', 1001), codex: mkStatus('codex', 1000) };
 
   let busy = false;
   let timer: NodeJS.Timeout | undefined;
 
-  const view = new MeterView(() => tick(false));
-  ctx.subscriptions.push(vscode.window.registerWebviewViewProvider(MeterView.id, view));
+  // Two independent panels: each can be dragged to wherever suits that tool.
+  const views = {
+    claude: new MeterView('aiLimitsMeter.claude', () => tick(false)),
+    codex: new MeterView('aiLimitsMeter.codex', () => tick(false)),
+  };
+  for (const v of Object.values(views)) ctx.subscriptions.push(vscode.window.registerWebviewViewProvider(v.id, v));
 
   async function tick(forceApi: boolean) {
     if (busy) return;
@@ -44,31 +53,43 @@ export function activate(ctx: vscode.ExtensionContext) {
       const snaps: ProviderSnapshot[] = [];
       if (want.includes('claude')) snaps.push(claude.snapshot());
       if (want.includes('codex')) snaps.push(codex.snapshot());
-      // hide a provider that is not installed and has no data
       const shown = snaps.filter((s) => s.available);
+      vscode.commands.executeCommand('setContext', 'aiLimitsMeter.showClaude', want.includes('claude'));
+      vscode.commands.executeCommand('setContext', 'aiLimitsMeter.showCodex', want.includes('codex'));
 
       const opts: RenderOpts = {
         currency: c.get<CurrencyMode>('currency', 'both'),
         fx: fx.current(),
         barColor: c.get<string>('barColor', '#F5C518'),
       };
-      view.update(renderAll(shown, opts), opts.barColor);
-
       const mode = c.get<string>('statusBar', 'limitsAndCost');
-      if (mode === 'off' || !shown.length) status.hide();
-      else {
-        status.text = statusText(shown, opts, mode === 'limitsAndCost');
-        const md = new vscode.MarkdownString(statusTooltip(shown, opts));
+
+      for (const id of ['claude', 'codex'] as const) {
+        const snap = shown.find((p) => p.id === id);
+        views[id].update(
+          snap
+            ? renderAll([snap], opts)
+            : `<div class="dim pad">${id === 'claude' ? 'Claude Code' : 'Codex'}: ${strings().notInstalled}</div>`,
+          opts.barColor
+        );
+
+        const item = statusItems[id];
+        if (mode === 'off' || !snap) {
+          item.hide();
+          continue;
+        }
+        item.text = statusText([snap], opts, mode === 'limitsAndCost');
+        const md = new vscode.MarkdownString(statusTooltip([snap], opts));
         md.supportThemeIcons = true;
-        status.tooltip = md;
-        const rem = minRemaining(shown);
-        status.backgroundColor =
-          rem <= 8
+        item.tooltip = md;
+        const used = 100 - minRemaining([snap]);
+        item.backgroundColor =
+          used >= 92
             ? new vscode.ThemeColor('statusBarItem.errorBackground')
-            : rem <= 20
+            : used >= 80
               ? new vscode.ThemeColor('statusBarItem.warningBackground')
               : undefined;
-        status.show();
+        item.show();
       }
       notify(shown);
     } catch (e) {
@@ -111,7 +132,8 @@ export function activate(ctx: vscode.ExtensionContext) {
 
   ctx.subscriptions.push(
     vscode.commands.registerCommand('aiLimitsMeter.refresh', () => tick(true)),
-    vscode.commands.registerCommand('aiLimitsMeter.focus', () => vscode.commands.executeCommand(`${MeterView.id}.focus`)),
+    vscode.commands.registerCommand('aiLimitsMeter.focus.claude', () => vscode.commands.executeCommand('aiLimitsMeter.claude.focus')),
+    vscode.commands.registerCommand('aiLimitsMeter.focus.codex', () => vscode.commands.executeCommand('aiLimitsMeter.codex.focus')),
     vscode.commands.registerCommand('aiLimitsMeter.openSettings', () =>
       vscode.commands.executeCommand('workbench.action.openSettings', '@ext:renatodouek.ai-limits-meter')
     ),

@@ -1,11 +1,10 @@
 import * as vscode from 'vscode';
 
 export class MeterView implements vscode.WebviewViewProvider {
-  public static readonly id = 'aiLimitsMeter.view';
   private view?: vscode.WebviewView;
   private lastHtml = '';
 
-  constructor(private onVisible: () => void) {}
+  constructor(public readonly id: string, private onVisible: () => void) {}
 
   resolveWebviewView(view: vscode.WebviewView): void {
     this.view = view;

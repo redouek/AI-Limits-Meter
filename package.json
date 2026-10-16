@@ -2,7 +2,7 @@
   "name": "ai-limits-meter",
   "displayName": "AI Limits Meter — Claude Code & Codex",
   "description": "See your Claude Code and Codex 5-hour and weekly limits, plus cost (R$/US$) and tokens, always visible in VS Code.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "publisher": "renatodouek",
   "license": "MIT",
   "icon": "media/icon.png",
@@ -51,9 +51,17 @@
       "aiLimitsMeter": [
         {
           "type": "webview",
-          "id": "aiLimitsMeter.view",
-          "name": "Limits",
-          "icon": "media/meter.svg"
+          "id": "aiLimitsMeter.claude",
+          "name": "Claude Code",
+          "icon": "media/meter.svg",
+          "when": "aiLimitsMeter.showClaude"
+        },
+        {
+          "type": "webview",
+          "id": "aiLimitsMeter.codex",
+          "name": "Codex",
+          "icon": "media/meter.svg",
+          "when": "aiLimitsMeter.showCodex"
         }
       ]
     },
@@ -64,25 +72,29 @@
         "icon": "$(refresh)"
       },
       {
-        "command": "aiLimitsMeter.focus",
-        "title": "AI Limits: Show panel"
-      },
-      {
         "command": "aiLimitsMeter.openSettings",
         "title": "AI Limits: Settings",
         "icon": "$(gear)"
+      },
+      {
+        "command": "aiLimitsMeter.focus.claude",
+        "title": "AI Limits: Show Claude Code panel"
+      },
+      {
+        "command": "aiLimitsMeter.focus.codex",
+        "title": "AI Limits: Show Codex panel"
       }
     ],
     "menus": {
       "view/title": [
         {
           "command": "aiLimitsMeter.refresh",
-          "when": "view == aiLimitsMeter.view",
+          "when": "view == aiLimitsMeter.claude || view == aiLimitsMeter.codex",
           "group": "navigation@1"
         },
         {
           "command": "aiLimitsMeter.openSettings",
-          "when": "view == aiLimitsMeter.view",
+          "when": "view == aiLimitsMeter.claude || view == aiLimitsMeter.codex",
           "group": "navigation@2"
         }
       ]
